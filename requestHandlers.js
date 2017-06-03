@@ -25,13 +25,23 @@ function start(response, request) {
 function upload(response, request) {
   console.log("Request handler 'upload' was called.");
 
+  if (request.method.toLowerCase() === 'post') {
+    processForm(response, request);
+
+  } else {
+    response.writeHead(302, {'Location': 'start'});
+    response.end();
+  }
+}
+
+function processForm(response, request) {
   var form = new formidable.IncomingForm();
   console.log('About to parse');
-  form.parse(request, function(error, fields, files) {
+  form.parse(request, function (error, fields, files) {
     console.log('parsing done');
     /* Possible error on Windows systems:
      tried to rename to an already existing file */
-    fs.rename(files.upload.path, '/tmp/test.jpg', function(err) {
+    fs.rename(files.upload.path, '/tmp/test.jpg', function (err) {
       if (err) {
         fs.unlink('/tmp/test.png');
         fs.rename(files.upload.path, '/tmp/test.jpg');
